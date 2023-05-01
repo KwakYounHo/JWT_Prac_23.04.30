@@ -1,3 +1,4 @@
 node_modules
 .env
 JWTSecretKey.js
+JWTRSKEY.js

@@ -1,13 +1,14 @@
-import http              from 'http';
-import fs                from 'fs';
-import path              from 'path';
-import { fileURLToPath } from 'url';
-import dotenv            from 'dotenv';
-import mysql             from 'mysql2';
-import qs                from 'querystring';
-import bcrypt            from 'bcrypt';
-import JWTKey            from './JWTSecretKey.js'
-import jwt               from 'jsonwebtoken';
+import http                      from 'http';
+import fs                        from 'fs';
+import path                      from 'path';
+import { fileURLToPath }         from 'url';
+import dotenv                    from 'dotenv';
+import mysql                     from 'mysql2';
+import qs                        from 'querystring';
+import bcrypt                    from 'bcrypt';
+import { privateKey, publicKey } from './JWTRSKEY.js'
+import jwt                       from 'jsonwebtoken';
+import JWTOption                 from './JWTSecretKey.js'
 
 const __fileName = fileURLToPath(import.meta.url);
 const __dirName  = path.dirname(__fileName);
@@ -53,6 +54,12 @@ const server = http.createServer((req,rep)=>{
       switch (req.url) {
         case '/' :
           return autoRep(200,'index.html', 'text/html');
+        case '/testURL' :
+          // console.log(req.headers.cookie);
+          const token = req.headers.cookie.split('=')[1];
+          console.log(token)
+          const result = jwt.verify(token, publicKey, {algorithms : 'RS256'});
+          console.log(result);
         default :
           try {
             rep.writeHead(200,{'Content-Type':`${getMIME()}; charset=utf-8`})
@@ -72,9 +79,10 @@ const server = http.createServer((req,rep)=>{
             DB.query(`select ID,PW from user_info WHERE ID='${_Data.ID}'`, (err, result)=>{
               if (err) console.log(err);
               if (result.length > 0) {
-                if (bcrypt.compareSync(bcrypt.hashSync(_Data.PW,12), result[0].PW)) {
-                  const token = jwt.sign({login:true, uid:result.ID},JWTKey.secretKey,JWTKey.option);
-                  rep.writeHead(200,{'Set-Cookie':[`jwt=${token}`], 'Content-Type':'text/html; charset=utf-8'});
+                // console.log(_Data);
+                if (bcrypt.compareSync(_Data.PW, result[0].PW)) {
+                  const token = jwt.sign({login:true, uid:result.ID},privateKey,JWTOption.option);
+                  rep.writeHead(200,{'Set-Cookie':[`jwt=${token}; httpOnly`], 'Content-Type':'text/html; charset=utf-8'});
                   rep.write(`<script>location.href='index.html'</script>`)
                   rep.end();
                 }
