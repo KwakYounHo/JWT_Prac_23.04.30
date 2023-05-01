@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <input type="button" value="토큰 검증">
+  <input type="button" value="토큰 생성">
+  <script type="module">
+    // import axios from 'axios';
+    const button = document.getElementsByTagName('input')[0];
+    // button.addEventListener('click', ()=>{
+    //   const request = new XMLHttpRequest();
+    //   request.open('GET','/testCheckToken');
+    //   request.send();
+    //   request.addEventListener('load', ()=>{
+    //     console.log(request.response);
+    //   })
+    // })
+    // button.addEventListener('click', async ()=>{
+      // const result = await axios.get('/testCheckToken');
+      // console.log(result);
+    // })
+    button.addEventListener('click', async ()=>{
+      const result = await fetch('/testCheckToken', {
+        method : 'get',
+        headers : {
+          'Content-Type':'application/json'
+        }
+      })
+      console.log(result);
+    })
+    
+    const button2 = document.getElementsByTagName('input')[1];
+    // button2.addEventListener('click', ()=>{
+    //   const request = new XMLHttpRequest();
+    //   request.open('GET', '/testCreateToken');
+    //   request.send();
+    //   request.addEventListener('load', ()=>{
+      //     console.log(request.response);
+      //   })
+      // })
+      // button2.addEventListener('click', async ()=>{
+        // const result = await axios.get('/testCreateToken');
+        // console.log(result);
+        // })
+        button2.addEventListener('click', async ()=>{
+          const result = await fetch('/testCreateToken', {
+            method : 'get',
+            headers : {
+              'Content-Type':'application/json'
+            }
+          })
+          console.log(result);
+        })
+  </script>
+</body>
+</html>
